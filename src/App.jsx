@@ -1,5 +1,6 @@
 import './App.css'
 import { useState } from 'react'
+import maus from './assets/maus.png'
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function MouseImage() {
   return(
     <div className="h-[58vh] flex items-center justify-center p-4 bg-white">
       <img 
-        src="public/maus.png" 
+        src={maus} 
         alt="Mathe Maus" 
         className="max-h-full max-w-full object-contain rounded-xl shadow-sm"
       />
