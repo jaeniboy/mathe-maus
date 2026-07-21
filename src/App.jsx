@@ -5,6 +5,8 @@ import maus from './assets/maus.png'
 function App() {
 
   const [puzzleCount, updatePuzzleCount] = useState(1)
+  const maxPuzzles = 2
+  const finished = puzzleCount > maxPuzzles
   
   function increasePuzzleCount() {
     updatePuzzleCount(puzzleCount + 1)
@@ -12,30 +14,36 @@ function App() {
 
   return (
     <main className="flex flex-col h-screen w-screen overflow-hidden bg-slate-50 select-none">
-      <Headline puzzleCount={puzzleCount}></Headline>
-      <MouseImage></MouseImage>
+      <Headline puzzleCount={puzzleCount} finished={finished}></Headline>
+      <MouseImage finished={finished}></MouseImage>
       <MathPuzzle updatePuzzleCount={increasePuzzleCount}></MathPuzzle>
     </main>
   )
 }
 
-function Headline({puzzleCount}) {
+function Headline({puzzleCount, finished}) {
   return(
     <header className="h-[15vh] flex flex-col items-center justify-center bg-blue-200 text-white shadow-md">
       <h1 className="text-3xl text-black font-extrabold">Mathe-Maus</h1>
-      <h2 className="text-xl text-black font-bold tracking-wide">Aufgabe {puzzleCount}</h2>
+      {!finished &&
+      
+      (<h2 className="text-xl text-black font-bold tracking-wide">Aufgabe {puzzleCount}</h2>)
+      }
     </header>
   )
 }
 
-function MouseImage() {
+function MouseImage({finished}) {
   return(
     <div className="h-[55vh] flex items-center justify-center p-4 bg-white">
-      <img 
+      {finished ?
+        (<div>won</div>) :
+      (<img 
         src={maus} 
         alt="Mathe Maus" 
         className="max-h-full max-w-full object-contain rounded-xl shadow-sm"
-      />
+      />)
+}
     </div>
   )
 }
