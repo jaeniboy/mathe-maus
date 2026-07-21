@@ -3,26 +3,34 @@ import { useState } from 'react'
 import maus from './assets/maus.png'
 
 function App() {
+
+  const [puzzleCount, updatePuzzleCount] = useState(1)
+  
+  function increasePuzzleCount() {
+    updatePuzzleCount(puzzleCount + 1)
+  }
+
   return (
     <main className="flex flex-col h-screen w-screen overflow-hidden bg-slate-50 select-none">
-      <Headline></Headline>
+      <Headline puzzleCount={puzzleCount}></Headline>
       <MouseImage></MouseImage>
-      <MathPuzzle></MathPuzzle>
+      <MathPuzzle updatePuzzleCount={increasePuzzleCount}></MathPuzzle>
     </main>
   )
 }
 
-function Headline() {
+function Headline({puzzleCount}) {
   return(
-    <header className="h-[12vh] flex items-center justify-center bg-blue-200 text-white shadow-md">
-      <h1 className="text-3xl font-extrabold tracking-wide">Mathe-Maus 🐭</h1>
+    <header className="h-[15vh] flex flex-col items-center justify-center bg-blue-200 text-white shadow-md">
+      <h1 className="text-3xl text-black font-extrabold">Mathe-Maus</h1>
+      <h2 className="text-xl text-black font-bold tracking-wide">Aufgabe {puzzleCount}</h2>
     </header>
   )
 }
 
 function MouseImage() {
   return(
-    <div className="h-[58vh] flex items-center justify-center p-4 bg-white">
+    <div className="h-[55vh] flex items-center justify-center p-4 bg-white">
       <img 
         src={maus} 
         alt="Mathe Maus" 
@@ -32,22 +40,22 @@ function MouseImage() {
   )
 }
 
-function MathPuzzle() {
+function MathPuzzle({updatePuzzleCount}) {
 
   const [choice, updateChoice] = useState(null)
-  const [resultCorrect, updateResultCorrect] = useState(false)
 
   const firstAddent = 1
   const secondAddent = 2
+  const solution = firstAddent + secondAddent
   const choices = [1,2,3,4,5]
 
   const choicesButtons = choices.map(number => 
   <div
     key={number}
-    className={`px-5 py-2 shadow-md rounded-full cursor-pointer border-2 border-transparent hover:border-indigo-400 ${(number === choice && resultCorrect) ? "bg-green-100" : (number === choice && !resultCorrect) ? "bg-red-100" : "bg-white"}`}
+    className={`px-5 py-2 shadow-md rounded-full cursor-pointer border-2 border-transparent hover:border-indigo-400 ${(number === choice && number === solution) ? "bg-green-100" : (number === choice && number !== solution) ? "bg-red-100" : "bg-white"}`}
     onClick={() => {
       updateChoice(number)
-      updateResultCorrect(firstAddent + secondAddent === number)
+      if (number === solution) {updatePuzzleCount()}
     }
   }
   >{number}</div>)
