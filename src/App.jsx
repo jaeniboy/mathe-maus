@@ -40,14 +40,37 @@ function MouseImage() {
   )
 }
 
+function createPuzzle() {
+  const firstNumber = Math.floor(Math.random() * 5)
+  const secondNumber = Math.floor(Math.random() * 5)
+  const solution = firstNumber + secondNumber
+  let choices = [solution]
+
+  while (choices.length < 5) {
+    const newChoice = Math.floor(Math.random() * 10)
+    if (!choices.includes(newChoice)) {
+      choices.push(newChoice)
+    }
+  }
+
+  const choicesShuffled = shuffle(choices)
+
+  return [firstNumber, secondNumber, solution, choicesShuffled]
+
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 function MathPuzzle({updatePuzzleCount}) {
 
   const [choice, updateChoice] = useState(null)
-
-  const firstAddent = 1
-  const secondAddent = 2
-  const solution = firstAddent + secondAddent
-  const choices = [1,2,3,4,5]
+  const [firstAddent, secondAddent, solution, choices] = createPuzzle()
 
   const choicesButtons = choices.map(number => 
   <div
