@@ -55,7 +55,7 @@ function createPuzzle() {
 
   const choicesShuffled = shuffle(choices)
 
-  return [firstNumber, secondNumber, solution, choicesShuffled]
+  return { firstNumber, secondNumber, solution, choices: choicesShuffled }
 
 }
 
@@ -69,28 +69,60 @@ function shuffle(array) {
 
 function MathPuzzle({updatePuzzleCount}) {
 
-  const [choice, updateChoice] = useState(null)
-  const [firstAddent, secondAddent, solution, choices] = createPuzzle()
+  const [puzzle, setPuzzle] = useState(() => createPuzzle())
+  const [selectedChoice, setSelectedChoice] = useState(null)
+  const [isAnimating, setIsAnimating] = useState(false)
 
-  const choicesButtons = choices.map(number => 
-  <div
-    key={number}
-    className={`px-5 py-2 shadow-md rounded-full cursor-pointer border-2 border-transparent hover:border-indigo-400 ${(number === choice && number === solution) ? "bg-green-100" : (number === choice && number !== solution) ? "bg-red-100" : "bg-white"}`}
-    onClick={() => {
-      updateChoice(number)
-      if (number === solution) {updatePuzzleCount()}
-    }
+  const handleChoiceClick = (number) => {
+    if (isAnimating) return // Mehrfachklicks während der Animation verhindern
+    
+    setSelectedChoice(number)
+    setIsAnimating(true)
+
+    // Dauer der Animation vor dem Update (z.B. 600ms)
+    setTimeout(() => {
+      if (number === puzzle.solution) {
+        updatePuzzleCount()
+        setPuzzle(createPuzzle())
+      }
+      setSelectedChoice(null)
+      setIsAnimating(false)
+    }, 1200)
   }
-  >{number}</div>)
+
+  const choicesButtons = puzzle.choices.map(number => {
+    const isSelected = number === selectedChoice
+    const isCorrect = number === puzzle.solution
+
+    // Dynamische Tailwind-Klassen basierend auf Status & Animation
+    let statusClasses = "bg-white border-transparent hover:border-indigo-400"
+    
+    if (isSelected) {
+      if (isCorrect) {
+        statusClasses = "bg-green-300 border-green-500 animate-bounce"
+      } else {
+        statusClasses = "bg-red-300 border-red-500 animate-shake"
+      }
+    }
+
+    return (
+      <button
+        key={number}
+        disabled={isAnimating}
+        className={`px-5 py-2 shadow-md rounded-full font-bold transition-colors duration-200 border-2 ${statusClasses}`}
+        onClick={() => handleChoiceClick(number)}
+      >
+        {number}
+      </button>
+    )
+  })
 
   return(
     <section className="h-[30vh] flex flex-col items-center justify-center bg-amber-100 p-4 border-t-4 border-amber-300">
       <div className="text-2xl font-bold text-slate-800 bg-white px-6 py-3 rounded-full shadow-md">
-        {firstAddent} + {secondAddent} = ?
+        {puzzle.firstNumber} + {puzzle.secondNumber} = ?
       </div>
-      <div 
-        className="flex flex-row gap-2 font-bold pt-3"
-      >
+      <div className="flex flex-row gap-2 font-bold pt-3">
         {choicesButtons}
       </div>
     </section>
